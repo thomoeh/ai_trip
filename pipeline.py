@@ -40,6 +40,16 @@ def create_hard_requirements(system_message: str) -> ChatPromptTemplate:
     )
 
 
+def customer_interaction(system_message: str) -> ChatPromptTemplate:
+    system_message_prompt = SystemMessagePromptTemplate.from_template(system_message)
+
+    human_message_prompt = HumanMessagePromptTemplate.from_template("{query}.")
+
+    return ChatPromptTemplate.from_messages(
+        [system_message_prompt, human_message_prompt]
+    )
+
+
 def run_chain(query: str) -> list:
     with open(SYSTEM_MESSAGES_FILEPATH, "r") as system_messages_file:
         system_messages = json.load(system_messages_file)
@@ -69,14 +79,29 @@ def run_chain(query: str) -> list:
     query_output = first_query_chain.run(query)
 
     similar_items = (
-        client.query.get("aitrippers", ["tour_name", "about_tour"])
+        client.query.get("aitrippers", ["tour_name", "about_tour", "url"])
         .with_near_text({"concepts": query_output})
         .with_limit(3)
-        # .with_where(hard_requirements)
         .do()
     )
 
-    return similar_items
+    return prettify_json(similar_items)
+
+
+def prettify_json(json: dict) -> dict:
+    tours = json["data"]["Get"]["Aitrippers"]
+
+    output = []
+
+    for tour in tours:
+        prettified_tour = {
+            "title": tour["tour_name"],
+            "description": tour["about_tour"],
+            "url": tour["url"],
+        }
+        output.append(prettified_tour)
+
+    return output
 
 
 def main():
