@@ -1,0 +1,5 @@
+2023-06-17 13:39:21 [INFO] Started server process [103583]
+2023-06-17 13:39:21 [INFO] Waiting for application startup.
+2023-06-17 13:39:21 [INFO] Application startup complete.
+2023-06-17 13:39:21 [INFO] Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2023-06-17 13:39:25 [INFO] 127.0.0.1:46406 - "GET / HTTP/1.1" 404
