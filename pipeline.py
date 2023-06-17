@@ -57,7 +57,7 @@ def run_chain(query: str) -> list:
     first_system_message = system_messages["foundation_prompt"]
 
     chat_prompt = create_first_prompt(first_system_message)
-    llm = ChatOpenAI(model="gpt-4")
+    llm = ChatOpenAI(model="gpt-4", openai_api_key=OPEN_AI_KEY)
     first_query_chain = LLMChain(prompt=chat_prompt, llm=llm, verbose=True)
 
     hard_requirements_query = create_hard_requirements(
@@ -79,7 +79,7 @@ def run_chain(query: str) -> list:
     query_output = first_query_chain.run(query)
 
     similar_items = (
-        client.query.get("aitrippers", ["tour_name", "about_tour", "url"])
+        client.query.get("aitrippersv2", ["tour_name", "about_tour", "url"])
         .with_near_text({"concepts": query_output})
         .with_limit(3)
         .do()
@@ -89,7 +89,8 @@ def run_chain(query: str) -> list:
 
 
 def prettify_json(json: dict) -> dict:
-    tours = json["data"]["Get"]["Aitrippers"]
+    print(json)
+    tours = json["data"]["Get"]["Aitrippersv2"]
 
     output = []
 
